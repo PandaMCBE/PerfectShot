@@ -1,0 +1,20 @@
+name: PerfectShot
+version: 1.0
+main: fr.pandamcbe.perfectshot.PerfectShot
+author: PandaMCBE
+depend:
+  - MGApi
+  - MGConstructorAPI
+commands:
+  stats:
+    permission: pandafun.commands.stats
+    permission-message: '§cVous n''avez pas la permission requise !'
+    description: Permet la gestion des stats d'un joueur.
+  report:
+    description: une commande de report (provisoir)
+    permission: mg.command.report
+    permission-message: 'vous n''avez pas la permissions'
+    aliases:
+      - rp
+  loadArenas:
+    description: Ceci est une commande pour charger des arènes

@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="PerfectShot:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/PerfectShot_jar</output-path>
+    <root id="archive" name="PerfectShot.jar">
+      <element id="module-output" name="PerfectShot" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/fr/pandamcbe/MGApi/1.0/MGApi-1.0.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
