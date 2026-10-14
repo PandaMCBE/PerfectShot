@@ -1,9 +1,11 @@
 package fr.pandamcbe.perfectshot.scoreboards.samaboardsclasses;
 
+import fr.pandamcbe.commons.ProfilAccount;
 import fr.pandamcbe.commons.StatsAccount;
 import fr.pandamcbe.mGConstructorAPI.MGConstructorAPI;
 import fr.pandamcbe.mGConstructorAPI.arenas.Arena;
 import fr.pandamcbe.mgapi.Main;
+import fr.pandamcbe.mgapi.serverutilapi.enums_strings.AccountType;
 import fr.pandamcbe.mgapi.serverutilapi.enums_strings.AllNames;
 import fr.pandamcbe.mgapi.serverutilapi.scoreboards.ObjectiveSign;
 import fr.pandamcbe.perfectshot.PerfectShot;
@@ -28,7 +30,8 @@ public class PersonalScoreboard extends fr.pandamcbe.mgapi.serverutilapi.scorebo
         Arena arena = MGConstructorAPI.getInstance().arenaManager.getArenaByPlayer(player.getUniqueId(), PerfectShot.getInstance().createArenas.getArenas());
         PftShotArena pftShotArena = (PftShotArena) arena;
 
-        StatsAccount statsAccount = (StatsAccount) Main.getInstance().manipulation.getAccount(PerfectShot.getInstance().mainMap, player.getUniqueId(), AllNames.statsPojo(AllNames.PFTSHOT.getName()));
+        StatsAccount statsAccount = (StatsAccount) Main.getInstance().manipulation.getStatsAccount(PerfectShot.getInstance().mainMap, player.getUniqueId(), AccountType.statsKey(AllNames.PFTSHOT.getName()));
+        ProfilAccount profilAccount = (ProfilAccount) Main.getInstance().manipulation.getProfilAccount(PerfectShot.getInstance().mainMap, player.getUniqueId(), AccountType.PROFIL.getKeyPrefix());
 
             if(player != null) {//Scoreboard en attente
 
@@ -36,7 +39,7 @@ public class PersonalScoreboard extends fr.pandamcbe.mgapi.serverutilapi.scorebo
                     this.objectiveSign.setLine(2, "§7En vies : §f" + pftShotArena.getInGamePlayers().size());
                     this.objectiveSign.setLine(3, "§7Cooldown : §f" + pftShotArena.getTimerCycle());
                     this.objectiveSign.setLine(4, "§7RoundsWon : §f" + pftShotArena.getWonRounds().get(player.getUniqueId()) + "§8/§f" + pftShotArena.getRounds());
-                    this.objectiveSign.setLine(5, "§7Coins : §f" + statsAccount.getCoins());
+                    this.objectiveSign.setLine(5, "§7Coins : §f" + profilAccount.getCoins());
                     this.objectiveSign.setLine(6, "§7Points : §f" + pftShotArena.getPoints().get(player.getUniqueId()));
                     this.objectiveSign.setLine(7, "§7Kills : §f" + (statsAccount.getKills() + (statsAccount.getKillstreaks() * 5)));
                     this.objectiveSign.setLine(8, "§7Arène : §f" + arena.getName());

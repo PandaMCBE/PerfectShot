@@ -27,7 +27,7 @@ public class PftShotStart extends BukkitRunnable {
 //        Arena arena = OneShot.getInstance().arenaManager.getArenaByPlayer(player); //si le seul joueur se déco alors on ne peut pas récupérer arena
         for (UUID uuid : arena.getAlluuids()) { //Pour chaque joueur de la liste d'ensemble de l'arène
             Player p = Bukkit.getPlayer(uuid);
-            new CountDownsManager(arena).runNewGame(this, perfectShot.waitingRoom.getWaitingRoom(), p);
+            new CountDownsManager(arena, arenaManager).runNewGame(this, p);
             if (arena.getStartingTimer() == 0) { //Si le timer atteint 0
                 cancel(); //Arrêter le timer
                 arena.getPoints().put(p.getUniqueId(), 0); //Entrer de la clé du joueur et de sa valeur à 0 dans la map des points

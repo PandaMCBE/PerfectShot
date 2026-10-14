@@ -1,6 +1,7 @@
 package fr.pandamcbe.perfectshot.listeners;
 
 import fr.pandamcbe.mgapi.Main;
+import fr.pandamcbe.mgapi.core.localmemory.DirtyManager;
 import fr.pandamcbe.perfectshot.PerfectShot;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -27,9 +28,9 @@ public class Game implements Listener {
         Player leaver = event.getPlayer(); //Récupération de l'objet du joueur
         event.setQuitMessage(null); //Annulation du message par défaut
 //        Arena arena = MGConstructorAPI.getInstance().getArenaManager().getArenaByPlayer(leaver.getUniqueId(), perfectShot.createArenas.getArenas()); //Récupération de l'arène où se trouve l'objet leaver avec la méthode getArenaByPlayer grâce à l'instance de la classe Main et celle d'ArenaManager enregistrée dedans et son getter
-        perfectShot.arenaManager.playerQuits(leaver); //Appel de la méthode whenPlayerGoOffline via l'instance de la classe Main, en y entrant l'objet leaver et l'arène retournée par la recherche de la méthode au-dessus.
         perfectShot.getScoreboardManager().onLogout(leaver);
-        Main.getInstance().redisPbSb.saveDatasToCache(leaver.getUniqueId(), PerfectShot.getInstance().mainMap); //Enregistrement des données en mémoire interne du joueur avec la Map principale, en direction de clés Redis
+        perfectShot.arenaManager.playerQuits(leaver); //Appel de la méthode whenPlayerGoOffline via l'instance de la classe Main, en y entrant l'objet leaver et l'arène retournée par la recherche de la méthode au-dessus.
+        new DirtyManager().forceSave(PerfectShot.getInstance().mainMap, leaver.getUniqueId());
         Main.getInstance().manipulation.deleteAccount(leaver.getUniqueId(), PerfectShot.getInstance().mainMap); //Suppression du compte de mémoire interne de l'objet leaver après l'avoir enregistré dans Redis
     }
 

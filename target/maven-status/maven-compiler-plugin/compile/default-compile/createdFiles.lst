@@ -5,8 +5,9 @@ fr\pandamcbe\perfectshot\timers\PftShotStart.class
 fr\pandamcbe\perfectshot\listeners\ParameterListeners.class
 fr\pandamcbe\perfectshot\utils\GiveKitsUtils.class
 fr\pandamcbe\perfectshot\scoreboards\samaboardsclasses\PersonalScoreboard.class
-fr\pandamcbe\perfectshot\rediscommunication\RPbSbUtils.class
+fr\pandamcbe\perfectshot\timers\PftShotRound.class
 fr\pandamcbe\perfectshot\PerfectShot.class
 fr\pandamcbe\perfectshot\timers\OSGameCycle.class
 fr\pandamcbe\perfectshot\managers\PftshotManager.class
-fr\pandamcbe\perfectshot\rediscommunication\RPbSbUtils$1.class
+fr\pandamcbe\perfectshot\commands\Commands.class
+fr\pandamcbe\perfectshot\rediscommunication\RedisSubCatch.class

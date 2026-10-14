@@ -53,14 +53,14 @@ public class OSGameCycle extends BukkitRunnable {
 
         if (arena.getTimerCycle() == 60 * 3) { //Si le timer du cycle de l'arène est égale à 180
             cancel(); //Annuler le timer
-            pftshotManager.arenaManager.placeBrokenBlocks(arena); //Reconstruire l'arène
+            pftshotManager.placeBrokenBlocks(arena); //Reconstruire l'arène
             //Pour chaque joueur de la liste d'ensemble de joueurs de l'arène
 
                 if (arena.getPoints().get(getHighestPointsPlayer()) > 0) {//Si le joueur qui a le nombre de points le plus haut de la map des points en a un nombre supérieure à 0
-                    gameSessionManager.ifLastRoundCore(arena);
+                    gameSessionManager.ifLastRound(pftshotManager, arena);
                     for(UUID uuid : arena.getPoints().keySet()) {
                         if(arena.getPoints().get(uuid).equals(arena.getPoints().get(getHighestPointsPlayer()))) {
-                            arena.nextMGRound(arena, Bukkit.getPlayer(uuid));
+                            arena.nextRound(arena, Bukkit.getPlayer(uuid));
                         }
                     }
                 }

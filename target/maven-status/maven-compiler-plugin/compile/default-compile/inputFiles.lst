@@ -1,8 +1,7 @@
 D:\OneDrive\Programmation_java\MG-Land-Plugin\PerfectShot\src\main\java\fr\pandamcbe\perfectshot\commands\Commands.java
 D:\OneDrive\Programmation_java\MG-Land-Plugin\PerfectShot\src\main\java\fr\pandamcbe\perfectshot\PerfectShot.java
 D:\OneDrive\Programmation_java\MG-Land-Plugin\PerfectShot\src\main\java\fr\pandamcbe\perfectshot\timers\PftShotRound.java
-D:\OneDrive\Programmation_java\MG-Land-Plugin\PerfectShot\src\main\java\fr\pandamcbe\perfectshot\rediscommunication\RPbSbUtils.java
-D:\OneDrive\Programmation_java\MG-Land-Plugin\PerfectShot\src\main\java\fr\pandamcbe\perfectshot\commands\StatCommand.java
+D:\OneDrive\Programmation_java\MG-Land-Plugin\PerfectShot\src\main\java\fr\pandamcbe\perfectshot\rediscommunication\RedisSubCatch.java
 D:\OneDrive\Programmation_java\MG-Land-Plugin\PerfectShot\src\main\java\fr\pandamcbe\perfectshot\timers\PftShotStart.java
 D:\OneDrive\Programmation_java\MG-Land-Plugin\PerfectShot\src\main\java\fr\pandamcbe\perfectshot\scoreboards\samaboardsclasses\PersonalScoreboard.java
 D:\OneDrive\Programmation_java\MG-Land-Plugin\PerfectShot\src\main\java\fr\pandamcbe\perfectshot\managers\PftshotManager.java

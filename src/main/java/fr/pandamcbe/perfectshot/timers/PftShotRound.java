@@ -30,7 +30,7 @@ public class PftShotRound extends BukkitRunnable {
 
     @Override
     public void run(){
-        new CountDownsManager(arena).runNewRound(this, perfectShot.waitingRoom.getWaitingRoom(), timer, Sound.CLICK, Sound.NOTE_PLING);
+        new CountDownsManager(arena, arenaManager).runNewRound(this, timer, Sound.CLICK, Sound.NOTE_PLING);
         for (UUID uuid : arena.getAlluuids()) { //Pour chaque joueur de la liste d'ensemble de l'arène
             Player p = Bukkit.getPlayer(uuid);
             switch (timer) {
@@ -49,6 +49,7 @@ public class PftShotRound extends BukkitRunnable {
                 case 0:
                     p.sendMessage("§a§l----------------------------\n§a§l----------------------------\n§a§l-----------------\n§b§lBut du jeu : §6§lSnipez tous vos adver\n§6§lsaires avec votre arc du futur !\n§d§n§lSoyez le dernier en vie !\n§a§l-----------------\n§a§l----------------------------\n§a§l----------------------------");
                     new GiveKitsUtils(p); //Donner le kit au joueur
+                    p.updateInventory();
                     break;
             }
         }

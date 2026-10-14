@@ -6,10 +6,6 @@ depend:
   - MGApi
   - MGConstructorAPI
 commands:
-  stats:
-    permission: pandafun.commands.stats
-    permission-message: '§cVous n''avez pas la permission requise !'
-    description: Permet la gestion des stats d'un joueur.
   report:
     description: une commande de report (provisoir)
     permission: mg.command.report

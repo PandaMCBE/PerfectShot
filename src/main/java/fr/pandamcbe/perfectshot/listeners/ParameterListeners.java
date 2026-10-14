@@ -1,11 +1,13 @@
 package fr.pandamcbe.perfectshot.listeners;
 
+import fr.pandamcbe.commons.ProfilAccount;
 import fr.pandamcbe.commons.StatsAccount;
 import fr.pandamcbe.mGConstructorAPI.MGConstructorAPI;
 import fr.pandamcbe.mGConstructorAPI.arenas.Arena;
-import fr.pandamcbe.mGConstructorAPI.managers.ArenaManager;
 import fr.pandamcbe.mGConstructorAPI.managers.GameSessionManager;
 import fr.pandamcbe.mgapi.Main;
+import fr.pandamcbe.mgapi.core.localmemory.DirtyManager;
+import fr.pandamcbe.mgapi.serverutilapi.enums_strings.AccountType;
 import fr.pandamcbe.mgapi.serverutilapi.enums_strings.AllNames;
 import fr.pandamcbe.perfectshot.PerfectShot;
 import fr.pandamcbe.perfectshot.arenas.PftShotArena;
@@ -33,7 +35,7 @@ import org.bukkit.potion.PotionEffectType;
 
 public class ParameterListeners implements Listener {
 
-    final private ArenaManager arenaManager = MGConstructorAPI.getInstance().getArenaManager();
+    final private PftshotManager arenaManager = PerfectShot.getInstance().getArenaManager();
     final private GameSessionManager gameSessionManager = MGConstructorAPI.getInstance().getGameManager();
 
     @EventHandler
@@ -49,7 +51,7 @@ public class ParameterListeners implements Listener {
         if (pftShotArena != null) {
             if (pftShotArena.getInGamePlayers().contains(player.getUniqueId())) { //Si le joueur n'est pas éliminé
                 if (location.getY() == 20) { //Si la coordonnée de haut de l'endroit où se situe le joueur est élevé à 20
-                    gameSessionManager.onDeath(arena, GameMode.ADVENTURE,10, 3, player); //On déclenche la mort du joueur s'il est hors de l'arène sans encore l'éliminer
+                    gameSessionManager.onDeath(arenaManager, arena, GameMode.ADVENTURE,10, 3, player); //On déclenche la mort du joueur s'il est hors de l'arène sans encore l'éliminer
                 }
                 Block block = location.subtract(0, 1, 0).getBlock(); //On récupère le bloc sur lequel se tient le joueur (en soustrayant 1)
                 if (block.getType().equals(Material.STONE)) { //Si ce bloc est de type stone
@@ -133,6 +135,7 @@ public class ParameterListeners implements Listener {
         Player Killer = victim.getKiller();
         PerfectShot perfectShot = PerfectShot.getInstance();
         PftshotManager pftshotManager = PerfectShot.getInstance().getArenaManager(); //Récupération de la classe ArenaManager qui ne craint rien si elle est appelée au démarrage, car elle contient que des méthodes et aucune variables
+        DirtyManager dirtyManager = new DirtyManager();
 
         if (victim.getLastDamageCause() instanceof EntityDamageByEntityEvent) {
             EntityDamageByEntityEvent damageEvent = (EntityDamageByEntityEvent) victim.getLastDamageCause();
@@ -154,26 +157,29 @@ public class ParameterListeners implements Listener {
 
                 User user2 = perfectShot.luckPerms.getPlayerAdapter(Player.class).getUser(Killer);
                 if (victim != Killer) { //Vérification si c'est pas le killer qui s'est envoyé une flèche à lui-même
-                    StatsAccount statsAccount = (StatsAccount) Main.getInstance().manipulation.getAccount(perfectShot.mainMap, Killer.getUniqueId(), AllNames.statsPojo(serverName));
-                    statsAccount.setCoins(statsAccount.getCoins() + 5);
+                    StatsAccount statsAccount = (StatsAccount) Main.getInstance().manipulation.getStatsAccount(perfectShot.mainMap, Killer.getUniqueId(), AccountType.statsKey(serverName));
+                    ProfilAccount profilAccount = (ProfilAccount) Main.getInstance().manipulation.getProfilAccount(perfectShot.mainMap, Killer.getUniqueId(), AccountType.PROFIL.getKeyPrefix());
+                    profilAccount.setCoins(profilAccount.getCoins() + 5);
                     statsAccount.setKills(statsAccount.getKills() + 1);
                     statsAccount.setElos(statsAccount.getElos() + 1);
-                    Main.getInstance().sendMemToCache.pushStats(Killer.getUniqueId(), serverName, statsAccount); //J'envoie directement les données modifiées à Redis puisqu'il ne s'agit pas d'un événement aussi courant que dans un FFA
-                    pftShotArena.getPoints().put(Killer.getUniqueId(), pftShotArena.getPoints().get(Killer.getUniqueId()) + 10); //On lui rajoute des points
+                    dirtyManager.markDirty(Killer.getUniqueId(), AccountType.statsKey(serverName), statsAccount);
+                    dirtyManager.markDirty(Killer.getUniqueId(), AccountType.PROFIL.getKeyPrefix(), profilAccount);
 
+                    pftShotArena.getPoints().put(Killer.getUniqueId(), pftShotArena.getPoints().get(Killer.getUniqueId()) + 10); //On lui rajoute des points
                     Killer.sendMessage("§7§l+ §b§l1 kill !");
                     Killer.sendMessage("§7§l+ §6§l5 coins !");
                     Killer.sendMessage("§b§l" + pftshotManager.getPrefix() + " §3> §r" + user2.getCachedData().getMetaData().getPrefix() + "§r " + Killer.getName() + " §7a\n térrassé §r" + user1.getCachedData().getMetaData().getPrefix() + "§r" + victim.getName());
 
                     Main.getInstance().gameMechanics.applyKillStreak(statsAccount, Killer, pftshotManager.getPrefix()); //Application du système de killstreak pour le killer
-                    StatsAccount statsAccount2 = (StatsAccount) Main.getInstance().manipulation.getAccount(perfectShot.mainMap, victim.getUniqueId(), AllNames.statsPojo(serverName));
+                    StatsAccount statsAccount2 = (StatsAccount) Main.getInstance().manipulation.getStatsAccount(perfectShot.mainMap, victim.getUniqueId(), AccountType.statsKey(serverName));
                     if (statsAccount2.getKillstreaks() > 1) { //Si la victime avait plus d'un kill, donc un killstreak
                         statsAccount2.setKillstreaks(0); //On lui réinitialise son killstreak car il est nul
                         victim.sendMessage("§c§lVous avez perdu vos KillStreaks!");
                     }
+                    dirtyManager.markDirty(victim.getUniqueId(), AccountType.statsKey(serverName), statsAccount2);
 
                     if (victim.getHealthScale() > 1.0) {
-                        gameSessionManager.onDeath(arena, GameMode.ADVENTURE,10, 3, victim); //Gestion de la mort de la victime, pas encore l'élimination
+                        gameSessionManager.onDeath(arenaManager, arena, GameMode.ADVENTURE,10, 3, victim); //Gestion de la mort de la victime, pas encore l'élimination
                         victim.setHealthScale(victim.getHealthScale() - 1.0);
                     }else {
                         pftShotArena.eliminate(victim);
