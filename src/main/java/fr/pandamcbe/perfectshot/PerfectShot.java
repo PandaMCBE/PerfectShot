@@ -43,8 +43,11 @@ public final class PerfectShot extends JavaPlugin {
         System.out.println("§2[DEBUG] PerfectShot chargé !");
         getCommand("report").setExecutor(new Commands());
         getCommand("loadArenas").setExecutor(new Commands());
+        new RedisSubCatch().subChannels();
+
         arenaManager = new PftshotManager();
         createArenas = new CreateArenas(); //Chargement des arènes pré-crées, au démarrage
+
         getServer().getPluginManager().registerEvents(new Game(this), this);
         getServer().getPluginManager().registerEvents(new ParameterListeners(), this);
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
@@ -62,7 +65,6 @@ public final class PerfectShot extends JavaPlugin {
         }
 
         mainMap = new HashMap<>();
-        new RedisSubCatch().subChannels();
 
     }
 

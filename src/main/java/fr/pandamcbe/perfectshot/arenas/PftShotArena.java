@@ -38,7 +38,6 @@ public class PftShotArena extends MGArena {
         this.name = name;
         this.minimumPlayers = minimumPlayers;
         this.maxPlayersAllowed = maxPlayers;
-        this.spawnByPlayer = new HashMap<>();
         this.spawns = new ArrayList<>();
         this.waitingRoom = new WaitingRoom();
         this.points = new HashMap<>();

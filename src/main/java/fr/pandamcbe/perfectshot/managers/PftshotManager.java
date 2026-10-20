@@ -2,7 +2,6 @@ package fr.pandamcbe.perfectshot.managers;
 
 import fr.pandamcbe.mGConstructorAPI.MGConstructorAPI;
 import fr.pandamcbe.mGConstructorAPI.arenas.Arena;
-import fr.pandamcbe.mGConstructorAPI.arenas.MGArena;
 import fr.pandamcbe.mGConstructorAPI.arenas.State;
 import fr.pandamcbe.mGConstructorAPI.managers.ArenaManager;
 import fr.pandamcbe.perfectshot.PerfectShot;
@@ -27,10 +26,12 @@ public class PftshotManager extends ArenaManager {
         System.out.println("Waiting for new game...");
         PerfectShot perfectShot = PerfectShot.getInstance();
         perfectShot.getScoreboardManager().removePlayers();
+        perfectShot.getScoreboardManager().onLogout(p);
         p.sendTitle("§e§lEn attente au", getPrefix()+ "..."); //Envoie du titre d'attente au joueur
         p.playSound(p.getLocation(), Sound.BLAZE_BREATH, 1.0f, 1.0f); //Envoie du son au joueur
         p.setHealthScale(20); //Remettre la taille de vie du joueur à 20, la taille par défaut après sa précédente partie si elle a existé
         User user = perfectShot.luckPerms.getPlayerAdapter(Player.class).getUser(p); //Récupération de l'objet User de LuckPerms avec l'objet Joueur
+        MGConstructorAPI.getInstance().getGameManager().clearStuffandHealth(p);
         lookForArena(this, perfectShot.createArenas.getArenas(), getPrefix(), p.getUniqueId());
 
 //        for (UUID uuid : waitingRoom.getWaitingRoom()) { //Pour chaque joueur dans la liste
@@ -61,8 +62,7 @@ public class PftshotManager extends ArenaManager {
     }
 
     public void respawning(Arena arena, Player player) {
-        MGArena mgArena = (MGArena) arena;
-        player.teleport(mgArena.getSpawnByPlayer().get(player.getUniqueId()));
+//        player.teleport(mgArena.getSpawnpointUUID().get(player.getUniqueId()));
         new GiveKitsUtils(player);
     }
 
@@ -73,6 +73,6 @@ public class PftshotManager extends ArenaManager {
     public void playerQuits(Player player) {
         PerfectShot perfectShot = PerfectShot.getInstance();
         PftShotArena pftShotArena = (PftShotArena) getArenaByPlayer(player.getUniqueId(), perfectShot.createArenas.getArenas());
-        whenPlayerDisconnects(player, pftShotArena, perfectShot.createArenas.getArenas());
+        whenPlayerDisconnects(this, player, pftShotArena, perfectShot.createArenas.getArenas());
     }
 }

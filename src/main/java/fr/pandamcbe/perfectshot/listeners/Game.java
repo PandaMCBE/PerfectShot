@@ -1,7 +1,11 @@
 package fr.pandamcbe.perfectshot.listeners;
 
+import fr.pandamcbe.commons.StatsAccount;
 import fr.pandamcbe.mgapi.Main;
 import fr.pandamcbe.mgapi.core.localmemory.DirtyManager;
+import fr.pandamcbe.mgapi.core.localmemory.MemAccountsManipulation;
+import fr.pandamcbe.mgapi.serverutilapi.enums_strings.AccountType;
+import fr.pandamcbe.mgapi.serverutilapi.enums_strings.AllNames;
 import fr.pandamcbe.perfectshot.PerfectShot;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -17,9 +21,16 @@ public class Game implements Listener {
     }
     @EventHandler
     void onJoin(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
+        Player p = event.getPlayer();
         event.setJoinMessage(null); //Annulation du message par défaut
-        perfectShot.arenaManager.customJoinEvent(player);
+        MemAccountsManipulation memAccountsManipulation = Main.getInstance().manipulation;
+        memAccountsManipulation.getShopAccounts(Main.getInstance().localCacheManager, p.getUniqueId(), AccountType.CJFFAKITS.getKeyPrefix(), AccountType.COSMEWORN.getKeyPrefix());
+        memAccountsManipulation.getProfilAccount(Main.getInstance().localCacheManager, p.getUniqueId(), AccountType.PROFIL.getKeyPrefix());
+        StatsAccount statsAccount = (StatsAccount) memAccountsManipulation.getStatsAccount(Main.getInstance().localCacheManager, p.getUniqueId(), AccountType.statsKey(AllNames.CJFFA.getName()));
+        statsAccount.setKills(0);
+        statsAccount.setKillstreaks(0);
+
+        perfectShot.arenaManager.customJoinEvent(p);
 
     }
 

@@ -1,0 +1,10 @@
+target
+.idea
+*.iml
+dependency-reduced-pom.xml
+.classpath
+.factorypath
+.project
+.settings
+.env
+out

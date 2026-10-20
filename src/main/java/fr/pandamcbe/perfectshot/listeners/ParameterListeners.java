@@ -136,6 +136,7 @@ public class ParameterListeners implements Listener {
         PerfectShot perfectShot = PerfectShot.getInstance();
         PftshotManager pftshotManager = PerfectShot.getInstance().getArenaManager(); //Récupération de la classe ArenaManager qui ne craint rien si elle est appelée au démarrage, car elle contient que des méthodes et aucune variables
         DirtyManager dirtyManager = new DirtyManager();
+        victim.spigot().respawn();
 
         if (victim.getLastDamageCause() instanceof EntityDamageByEntityEvent) {
             EntityDamageByEntityEvent damageEvent = (EntityDamageByEntityEvent) victim.getLastDamageCause();
@@ -170,7 +171,7 @@ public class ParameterListeners implements Listener {
                     Killer.sendMessage("§7§l+ §6§l5 coins !");
                     Killer.sendMessage("§b§l" + pftshotManager.getPrefix() + " §3> §r" + user2.getCachedData().getMetaData().getPrefix() + "§r " + Killer.getName() + " §7a\n térrassé §r" + user1.getCachedData().getMetaData().getPrefix() + "§r" + victim.getName());
 
-                    Main.getInstance().gameMechanics.applyKillStreak(statsAccount, Killer, pftshotManager.getPrefix()); //Application du système de killstreak pour le killer
+                    Main.getInstance().gameMechanics.applyKillStreak(statsAccount, Killer, pftshotManager.getColor()+pftshotManager.getPrefix()); //Application du système de killstreak pour le killer
                     StatsAccount statsAccount2 = (StatsAccount) Main.getInstance().manipulation.getStatsAccount(perfectShot.mainMap, victim.getUniqueId(), AccountType.statsKey(serverName));
                     if (statsAccount2.getKillstreaks() > 1) { //Si la victime avait plus d'un kill, donc un killstreak
                         statsAccount2.setKillstreaks(0); //On lui réinitialise son killstreak car il est nul

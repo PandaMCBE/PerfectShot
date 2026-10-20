@@ -8,6 +8,7 @@ import fr.pandamcbe.perfectshot.arenas.PftShotArena;
 import fr.pandamcbe.perfectshot.managers.PftshotManager;
 import fr.pandamcbe.perfectshot.utils.GiveKitsUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -39,6 +40,7 @@ public class PftShotRound extends BukkitRunnable {
                     p.setHealthScale(6.0); //Taille de la durée de vie mise à 3 cœurs ou 6 demi-coeurs
                     gameSessionManager.clearStuffandHealth(p); //Nettoyage de l'inventaire de chaque joueur
                     p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 999999, 1, true)); //Ajout d'un effet de vitesse de durée infini de niveau 2 sans voir les particules, à chaque joueur
+                    p.setGameMode(GameMode.ADVENTURE);
                     p.sendTitle("§7§lLancement dans:", "§c§l10");
                     p.sendMessage("§6§l" + perfectShot.arenaManager.getPrefix() + "§3§l> §b§lProfitez en pour vous disperser sur la map !");
                     p.playSound(p.getLocation(), Sound.CLICK, 1.0f, 1.0f);
