@@ -55,8 +55,8 @@ public class PftShotRound extends BukkitRunnable {
                     break;
             }
         }
-        if(timer == 0){
-            OSGameCycle osGameCycle = new OSGameCycle(arena); //Initialisation de la classe de type Runnable du cycle de la partie à un nouveau constructeur, avec l'objet arena
+        if(timer == 0) {
+            PftShotGameCycle osGameCycle = new PftShotGameCycle(arena); //Initialisation de la classe de type Runnable du cycle de la partie à un nouveau constructeur, avec l'objet arena
             osGameCycle.runTaskTimer(perfectShot, 0, 20); //Démarrage sans délai d'un timer qui s'exécute toutes les secondes
         }
         timer--;

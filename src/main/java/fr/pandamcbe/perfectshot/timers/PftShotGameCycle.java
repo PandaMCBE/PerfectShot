@@ -29,11 +29,7 @@ public class PftShotGameCycle extends BukkitRunnable {
 
     private UUID getHighestPointsPlayer(){
         getSorting().sort(Map.Entry.comparingByValue(Collections.reverseOrder())); //Trier le getter de la liste d'entrées des joueurs par points dans l'ordre décroissant
-
-        for (Map.Entry<UUID, Integer> entry : sorting) { //Pour chaque entrée de la map des points
-                return entry.getKey(); //retourner la clé de l'entrée et arrêter la boucle, donc concrètement la première clé, qui est en plus le joueur qui a le plus de points
-        }
-        return null; //retourner null par défaut, s'il n'y a aucun joueur
+        return getSorting().getFirst().getKey(); //retourner null par défaut, s'il n'y a aucun joueur
     }
 
     @Override

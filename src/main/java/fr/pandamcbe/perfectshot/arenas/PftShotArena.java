@@ -33,9 +33,10 @@ public class PftShotArena extends MGArena {
         this.points = points;
     }
 
-    public PftShotArena(Location middlespawn, String name, String mode, Integer minimumPlayers, Integer maxPlayers){
+    public PftShotArena(Location middlespawn, String name, String mode, Integer maxRounds, Integer minimumPlayers, Integer maxPlayers){
         this.middlespawn = middlespawn;
         this.name = name;
+        this.maxRounds = maxRounds;
         this.minimumPlayers = minimumPlayers;
         this.maxPlayersAllowed = maxPlayers;
         this.spawns = new ArrayList<>();

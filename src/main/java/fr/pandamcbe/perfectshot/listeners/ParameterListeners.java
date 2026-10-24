@@ -13,10 +13,7 @@ import fr.pandamcbe.perfectshot.PerfectShot;
 import fr.pandamcbe.perfectshot.arenas.PftShotArena;
 import fr.pandamcbe.perfectshot.managers.PftshotManager;
 import net.luckperms.api.model.user.User;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -37,7 +34,7 @@ public class ParameterListeners implements Listener {
 
     final private PftshotManager arenaManager = PerfectShot.getInstance().getArenaManager();
     final private GameSessionManager gameSessionManager = MGConstructorAPI.getInstance().getGameManager();
-
+    private static final double HALF_WIDTH = 0.3;
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
@@ -51,34 +48,58 @@ public class ParameterListeners implements Listener {
         if (pftShotArena != null) {
             if (pftShotArena.getInGamePlayers().contains(player.getUniqueId())) { //Si le joueur n'est pas éliminé
                 if (location.getY() == 20) { //Si la coordonnée de haut de l'endroit où se situe le joueur est élevé à 20
-                    gameSessionManager.onDeath(arenaManager, arena, GameMode.ADVENTURE,10, 3, player); //On déclenche la mort du joueur s'il est hors de l'arène sans encore l'éliminer
+                    gameSessionManager.onDeath(arenaManager, arena, GameMode.ADVENTURE, 10, 3, player); //On déclenche la mort du joueur s'il est hors de l'arène sans encore l'éliminer
                 }
-                Block block = location.subtract(0, 1, 0).getBlock(); //On récupère le bloc sur lequel se tient le joueur (en soustrayant 1)
-                if (block.getType().equals(Material.STONE)) { //Si ce bloc est de type stone
-                    pftShotArena.getBlocks().put(block.getLocation(), block.getType());
 
-                    Bukkit.getScheduler().runTaskLater(perfectShot, () -> {
-                        block.setType(Material.AIR); //On remplace ce bloc par de l'air après un délai de 10 s pour le détruire sans que cela se casse directement sous les pieds du joueur.
-
-                    }, 10);
+                //On récupère le bloc sur lequel se tient le joueur (en soustrayant 1)
+                Block block = getBlocksUnder(player);
+                if(block != null) {
+                    if (block.getType() == Material.STONE) {
+                        //Si ce bloc est de type stone
+//                        pftShotArena.getBlocks().put(block.getLocation(), block.getType());
+                        if (pftShotArena.getBlocks().putIfAbsent(block.getLocation(), block.getType()) == null) {
+                            Bukkit.getScheduler().runTaskLater(perfectShot, () -> {
+                                block.setType(Material.AIR); //On remplace ce bloc par de l'air après un délai de 10 s pour le détruire sans que cela se casse directement sous les pieds du joueur.
+                            }, 5);
+                        }
+                    }
                 }
             }
         }
     }
+    private Block getBlocksUnder(Player player) {
+        Location loc = player.getLocation();
+        World world = loc.getWorld();
+        double y = loc.getY() - 0.1; // juste sous les pieds
 
-    private Block getBlock(Location location) {
-        Block block = location.subtract(0, 1, 0).getBlock();
-        for (int xOffset = -1; xOffset <= 1; xOffset++) { //Si offSet qui est égale à -1 est égale ou inférieure à 1, on lui rajoute 1 -> Cette boucle est donc exécutée deux fois pour obtenir 2 à la fin
-//            for (int yOffset = -1; yOffset <= 1; yOffset++) {
-            for (int zOffset = -1; zOffset <= 1; zOffset++) {
-                block.getLocation().subtract(xOffset, 0, zOffset);
-            }
-//            }
+        Block center = new Location(world, loc.getX(), y, loc.getZ()).getBlock();
+        if (center.getType() != Material.AIR) {
+            return center;
         }
 
-        return block;
-    }
+        // 2. Centre au-dessus du vide (joueur au bord) : on cherche parmi les coins
+        //    et on ne garde que le bloc le plus proche du centre
+        Block closest = null;
+        double closestDist = Double.MAX_VALUE;
 
+        for (double dx : new double[]{-HALF_WIDTH, HALF_WIDTH}) {
+            for (double dz : new double[]{-HALF_WIDTH, HALF_WIDTH}) {
+                Block b = new Location(world, loc.getX() + dx, y, loc.getZ() + dz).getBlock();
+                if (b.getType() == Material.AIR) continue;
+
+                // distance entre le joueur et le centre du bloc (en X/Z)
+                double distX = (b.getX() + 0.5) - loc.getX();
+                double distZ = (b.getZ() + 0.5) - loc.getZ();
+                double dist = distX * distX + distZ * distZ;
+
+                if (dist < closestDist) {
+                    closestDist = dist;
+                    closest = b;
+                }
+            }
+        }
+        return closest; // peut être null : rien sous les pieds
+    }
     @EventHandler
     void onFoodLevelChange(FoodLevelChangeEvent event) {
         //Je tiens à préciser que l'objet Player est tiré de la classe HumanEntity, tirée de HumanEntity, tirée d'Entity, donc normalement, c'est effectivement compatible
