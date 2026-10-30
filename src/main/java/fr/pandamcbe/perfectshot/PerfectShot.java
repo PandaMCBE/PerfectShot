@@ -7,6 +7,7 @@ import fr.pandamcbe.perfectshot.listeners.Game;
 import fr.pandamcbe.perfectshot.listeners.ParameterListeners;
 import fr.pandamcbe.perfectshot.managers.PftshotManager;
 import fr.pandamcbe.perfectshot.rediscommunication.RedisSubCatch;
+import fr.pandamcbe.perfectshot.timers.PftShotRound;
 import net.luckperms.api.LuckPerms;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -32,6 +33,7 @@ public final class PerfectShot extends JavaPlugin {
         return executorMonoThread;
     }
     public Map<UUID, Map<String, Object>> mainMap;
+    public PftShotRound pftShotRound;
 
     public ScheduledExecutorService getScheduledExecutorService() {
         return scheduledExecutorService;
@@ -47,7 +49,6 @@ public final class PerfectShot extends JavaPlugin {
 
         arenaManager = new PftshotManager();
         createArenas = new CreateArenas(); //Chargement des arènes pré-crées, au démarrage
-
         getServer().getPluginManager().registerEvents(new Game(this), this);
         getServer().getPluginManager().registerEvents(new ParameterListeners(), this);
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");

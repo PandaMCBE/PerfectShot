@@ -16,20 +16,9 @@ public class PftShotGameCycle extends BukkitRunnable {
     private final PftShotArena arena; //Instanciation de la classe Arena avec une variable de type privée et constante
     private final PftshotManager pftshotManager = PerfectShot.getInstance().getArenaManager(); //Initialisation de la variable arenamanager à l'instance de sa classe du même nom, de type privée et constante
     private final GameSessionManager gameSessionManager = MGConstructorAPI.getInstance().getGameManager();
-    private final List<Map.Entry<UUID, Integer>> sorting; //Création d'une liste contenant les entrées d'une map avec un Joueur en clé et Integer en valeur, de type privée et constante
     private final PerfectShot perfectShot = PerfectShot.getInstance();
     public PftShotGameCycle(PftShotArena arena) {
         this.arena = arena; //Initialisation de la variable arena avec celle qui est donnée par le constructeur
-        this.sorting = new ArrayList<>(arena.getPoints().entrySet()); //Initialisation de la liste à une nouvelle ArrayList contenant le Set des entrées de la map des points
-    }
-
-    private List<Map.Entry<UUID, Integer>> getSorting(){ //getter de la liste
-        return sorting;
-    }
-
-    private UUID getHighestPointsPlayer(){
-        getSorting().sort(Map.Entry.comparingByValue(Collections.reverseOrder())); //Trier le getter de la liste d'entrées des joueurs par points dans l'ordre décroissant
-        return getSorting().getFirst().getKey(); //retourner null par défaut, s'il n'y a aucun joueur
     }
 
     @Override
@@ -47,21 +36,25 @@ public class PftShotGameCycle extends BukkitRunnable {
             }
         }
 
-        if (arena.getTimerCycle() == 60 * 3) { //Si le timer du cycle de l'arène est égale à 180
+        if (arena.getTimerCycle() == 60 * 1) { //Si le timer du cycle de l'arène est égale à 180
             cancel(); //Annuler le timer
+            new PftShotRound(arena, perfectShot).stop();
             pftshotManager.placeBrokenBlocks(arena); //Reconstruire l'arène
             //Pour chaque joueur de la liste d'ensemble de joueurs de l'arène
 
-                if (arena.getPoints().get(getHighestPointsPlayer()) > 0) {//Si le joueur qui a le nombre de points le plus haut de la map des points en a un nombre supérieure à 0
-                    gameSessionManager.ifLastRound(pftshotManager, arena);
+
+            arena.setRounds(arena.getRounds() + 1); //Ajouter 1 à la variable du nombre de manches essuyées
+            if (arena.getPoints().get((UUID) gameSessionManager.getHighestPointsPlayer(arena.getPoints(), true)) > 0) {//Si le joueur qui a le nombre de points le plus haut de la map des points en a un nombre supérieure à 0
+//                    gameSessionManager.ifLastRound(pftshotManager, arena);
                     for(UUID uuid : arena.getPoints().keySet()) {
-                        if(arena.getPoints().get(uuid).equals(arena.getPoints().get(getHighestPointsPlayer()))) {
+                        if(arena.getPoints().get(uuid).equals(arena.getPoints().get((UUID) gameSessionManager.getHighestPointsPlayer(arena.getPoints(), true)))) {
                             arena.nextRound(arena, Bukkit.getPlayer(uuid));
                         }
                     }
                 }
-                pftshotManager.startCountDown(arena);
-                arena.setRounds(arena.getRounds() + 1); //Ajouter 1 à la variable du nombre de manches essuyées
+                if(arena.getRounds() <= (arena.getMaxRounds() - 1)) {
+                    pftshotManager.startCountDown(arena);
+                }
                 for(UUID uuid : arena.getAlluuids()) {
                     Player p = Bukkit.getPlayer(uuid);
                     arena.getPoints().put(p.getUniqueId(), 0); //Réinitialisation du nombre de points des joueurs dans la map

@@ -16,6 +16,7 @@ import net.luckperms.api.model.user.User;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,6 +25,7 @@ import java.util.UUID;
 
 public class PftShotArena extends MGArena {
     private Map<UUID, Integer> points;
+    private BukkitTask bukkitTask;
 
     public Map<UUID, Integer> getPoints() {
         return points;
@@ -31,6 +33,14 @@ public class PftShotArena extends MGArena {
 
     public void setPoints(Map<UUID, Integer> points) {
         this.points = points;
+    }
+
+    public BukkitTask getBukkitTask() {
+        return bukkitTask;
+    }
+
+    public void setBukkitTask(BukkitTask bukkitTask) {
+        this.bukkitTask = bukkitTask;
     }
 
     public PftShotArena(Location middlespawn, String name, String mode, Integer maxRounds, Integer minimumPlayers, Integer maxPlayers){
@@ -43,6 +53,7 @@ public class PftShotArena extends MGArena {
         this.waitingRoom = new WaitingRoom();
         this.points = new HashMap<>();
         this.mode = mode;
+        this.bukkitTask = null;
         restart();
     }
 
@@ -64,8 +75,8 @@ public class PftShotArena extends MGArena {
     }
 
     public void eliminate(Player victim) {
-        StatsAccount statsAccount = (StatsAccount) Main.getInstance().manipulation.getStatsAccount(PerfectShot.getInstance().mainMap, victim.getUniqueId(), AccountType.statsKey(serverName));
-        ProfilAccount profilAccount = (ProfilAccount) Main.getInstance().manipulation.getProfilAccount(PerfectShot.getInstance().mainMap, victim.getUniqueId(), AccountType.PROFIL.getKeyPrefix());
+        StatsAccount statsAccount = (StatsAccount) Main.getInstance().manipulation.getStatsAccount(Main.getInstance().localCacheManager, victim.getUniqueId(), AccountType.statsKey(serverName));
+        ProfilAccount profilAccount = (ProfilAccount) Main.getInstance().manipulation.getProfilAccount(Main.getInstance().localCacheManager, victim.getUniqueId(), AccountType.PROFIL.getKeyPrefix());
         statsAccount.setElos(statsAccount.getElos() - 1);
         profilAccount.setCoins(profilAccount.getCoins() - 2);
         dirtyManager.markDirty(victim.getUniqueId(), AccountType.statsKey(serverName), statsAccount);
@@ -78,8 +89,8 @@ public class PftShotArena extends MGArena {
 
     public void customWinEvent(Object pWinner) {
         Player winner = (Player) pWinner;
-        StatsAccount statsAccount = (StatsAccount) Main.getInstance().manipulation.getStatsAccount(PerfectShot.getInstance().mainMap, winner.getUniqueId(), AccountType.statsKey(serverName));
-        ProfilAccount profilAccount = (ProfilAccount) Main.getInstance().manipulation.getProfilAccount(PerfectShot.getInstance().mainMap, winner.getUniqueId(), AccountType.PROFIL.getKeyPrefix());
+        StatsAccount statsAccount = (StatsAccount) Main.getInstance().manipulation.getStatsAccount(Main.getInstance().localCacheManager, winner.getUniqueId(), AccountType.statsKey(serverName));
+        ProfilAccount profilAccount = (ProfilAccount) Main.getInstance().manipulation.getProfilAccount(Main.getInstance().localCacheManager, winner.getUniqueId(), AccountType.PROFIL.getKeyPrefix());
         profilAccount.setCoins(profilAccount.getCoins() + 15);
         statsAccount.setWins(statsAccount.getWins() + 1);
         dirtyManager.markDirty(winner.getUniqueId(), AccountType.statsKey(serverName), statsAccount);
@@ -96,7 +107,7 @@ public class PftShotArena extends MGArena {
     @Override
     public void nextRound(MGArena arena, Object o) {
         Player player = (Player) o;
-        gameSessionManager.nextRound(arenaManager, perfectShot.createArenas.getArenas(), player, perfectShot.mainMap, 10, 0);
         OnChangingRound((PftShotArena)arena, player);
+        gameSessionManager.nextRound(arenaManager, perfectShot.createArenas.getArenas(), player, Main.getInstance().localCacheManager, 10, 0);
     }
 }

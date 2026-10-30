@@ -41,8 +41,8 @@ public class PftShotStart extends BukkitRunnable {
         if(arena.getStartingTimer() == 0){
             PftShotRound round = new PftShotRound(arena, perfectShot); //Initialisation du runnable des manches de la partie avec le constructeur de OSGameRound et l'arène en cours en paramètre
             round.runTaskTimer(perfectShot, 0, 20); //Exécution du timer chaque seconde, sans délai au démarrage
+        } else {
+            arena.setStartingTimer(arena.getStartingTimer() - 1);//Enlever 1 chaque seconde au temps impartit par l'arène
         }
-
-        arena.setStartingTimer(arena.getStartingTimer() - 1); //Enlever 1 chaque seconde au temps impartit par l'arène
     }
 }

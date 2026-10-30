@@ -30,8 +30,8 @@ public class PersonalScoreboard extends fr.pandamcbe.mgapi.serverutilapi.scorebo
         Arena arena = MGConstructorAPI.getInstance().arenaManager.getArenaByPlayer(player.getUniqueId(), PerfectShot.getInstance().createArenas.getArenas());
         PftShotArena pftShotArena = (PftShotArena) arena;
 
-        StatsAccount statsAccount = (StatsAccount) Main.getInstance().manipulation.getStatsAccount(PerfectShot.getInstance().mainMap, player.getUniqueId(), AccountType.statsKey(AllNames.PFTSHOT.getName()));
-        ProfilAccount profilAccount = (ProfilAccount) Main.getInstance().manipulation.getProfilAccount(PerfectShot.getInstance().mainMap, player.getUniqueId(), AccountType.PROFIL.getKeyPrefix());
+        StatsAccount statsAccount = (StatsAccount) Main.getInstance().manipulation.getStatsAccount(Main.getInstance().localCacheManager, player.getUniqueId(), AccountType.statsKey(AllNames.PFTSHOT.getName()));
+        ProfilAccount profilAccount = (ProfilAccount) Main.getInstance().manipulation.getProfilAccount(Main.getInstance().localCacheManager, player.getUniqueId(), AccountType.PROFIL.getKeyPrefix());
 
             if(player != null) {//Scoreboard en attente
 

@@ -11,6 +11,7 @@ import fr.pandamcbe.perfectshot.timers.PftShotStart;
 import fr.pandamcbe.perfectshot.utils.GiveKitsUtils;
 import net.luckperms.api.model.user.User;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
@@ -27,6 +28,7 @@ public class PftshotManager extends ArenaManager {
         PerfectShot perfectShot = PerfectShot.getInstance();
         perfectShot.getScoreboardManager().removePlayers();
         perfectShot.getScoreboardManager().onLogout(p);
+        p.setGameMode(GameMode.ADVENTURE);
         p.sendTitle("§e§lEn attente au", getPrefix()+ "..."); //Envoie du titre d'attente au joueur
         p.playSound(p.getLocation(), Sound.BLAZE_BREATH, 1.0f, 1.0f); //Envoie du son au joueur
         p.setHealthScale(20); //Remettre la taille de vie du joueur à 20, la taille par défaut après sa précédente partie si elle a existé
@@ -49,7 +51,7 @@ public class PftshotManager extends ArenaManager {
             pftShotStart.runTaskTimer(MGConstructorAPI.getInstance(), 0, 20);
         } else {
             PftShotRound pftShotRound = new PftShotRound(pftShotArena, perfectShot);
-            pftShotRound.runTaskTimer(MGConstructorAPI.getInstance(), 0, 20);
+            pftShotRound.runTaskTimer(MGConstructorAPI.getInstance(), 20 * 2, 20);
         }
     }
 
@@ -74,5 +76,8 @@ public class PftshotManager extends ArenaManager {
         PerfectShot perfectShot = PerfectShot.getInstance();
         PftShotArena pftShotArena = (PftShotArena) getArenaByPlayer(player.getUniqueId(), perfectShot.createArenas.getArenas());
         whenPlayerDisconnects(this, player, pftShotArena, perfectShot.createArenas.getArenas());
+//        if(pftShotArena.getState().equals(State.FINISHED)) {
+//            new PftShotRound(pftShotArena, perfectShot).stop();
+//        }
     }
 }

@@ -13,8 +13,8 @@ import fr.pandamcbe.perfectshot.PerfectShot;
 import fr.pandamcbe.perfectshot.arenas.PftShotArena;
 import fr.pandamcbe.perfectshot.managers.PftshotManager;
 import net.luckperms.api.model.user.User;
-import org.bukkit.*;
-import org.bukkit.block.Block;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -34,7 +34,6 @@ public class ParameterListeners implements Listener {
 
     final private PftshotManager arenaManager = PerfectShot.getInstance().getArenaManager();
     final private GameSessionManager gameSessionManager = MGConstructorAPI.getInstance().getGameManager();
-    private static final double HALF_WIDTH = 0.3;
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
@@ -51,55 +50,10 @@ public class ParameterListeners implements Listener {
                     gameSessionManager.onDeath(arenaManager, arena, GameMode.ADVENTURE, 10, 3, player); //On déclenche la mort du joueur s'il est hors de l'arène sans encore l'éliminer
                 }
 
-                //On récupère le bloc sur lequel se tient le joueur (en soustrayant 1)
-                Block block = getBlocksUnder(player);
-                if(block != null) {
-                    if (block.getType() == Material.STONE) {
-                        //Si ce bloc est de type stone
-//                        pftShotArena.getBlocks().put(block.getLocation(), block.getType());
-                        if (pftShotArena.getBlocks().putIfAbsent(block.getLocation(), block.getType()) == null) {
-                            Bukkit.getScheduler().runTaskLater(perfectShot, () -> {
-                                block.setType(Material.AIR); //On remplace ce bloc par de l'air après un délai de 10 s pour le détruire sans que cela se casse directement sous les pieds du joueur.
-                            }, 5);
-                        }
-                    }
-                }
             }
         }
     }
-    private Block getBlocksUnder(Player player) {
-        Location loc = player.getLocation();
-        World world = loc.getWorld();
-        double y = loc.getY() - 0.1; // juste sous les pieds
 
-        Block center = new Location(world, loc.getX(), y, loc.getZ()).getBlock();
-        if (center.getType() != Material.AIR) {
-            return center;
-        }
-
-        // 2. Centre au-dessus du vide (joueur au bord) : on cherche parmi les coins
-        //    et on ne garde que le bloc le plus proche du centre
-        Block closest = null;
-        double closestDist = Double.MAX_VALUE;
-
-        for (double dx : new double[]{-HALF_WIDTH, HALF_WIDTH}) {
-            for (double dz : new double[]{-HALF_WIDTH, HALF_WIDTH}) {
-                Block b = new Location(world, loc.getX() + dx, y, loc.getZ() + dz).getBlock();
-                if (b.getType() == Material.AIR) continue;
-
-                // distance entre le joueur et le centre du bloc (en X/Z)
-                double distX = (b.getX() + 0.5) - loc.getX();
-                double distZ = (b.getZ() + 0.5) - loc.getZ();
-                double dist = distX * distX + distZ * distZ;
-
-                if (dist < closestDist) {
-                    closestDist = dist;
-                    closest = b;
-                }
-            }
-        }
-        return closest; // peut être null : rien sous les pieds
-    }
     @EventHandler
     void onFoodLevelChange(FoodLevelChangeEvent event) {
         //Je tiens à préciser que l'objet Player est tiré de la classe HumanEntity, tirée de HumanEntity, tirée d'Entity, donc normalement, c'est effectivement compatible
@@ -179,8 +133,8 @@ public class ParameterListeners implements Listener {
 
                 User user2 = perfectShot.luckPerms.getPlayerAdapter(Player.class).getUser(Killer);
                 if (victim != Killer) { //Vérification si c'est pas le killer qui s'est envoyé une flèche à lui-même
-                    StatsAccount statsAccount = (StatsAccount) Main.getInstance().manipulation.getStatsAccount(perfectShot.mainMap, Killer.getUniqueId(), AccountType.statsKey(serverName));
-                    ProfilAccount profilAccount = (ProfilAccount) Main.getInstance().manipulation.getProfilAccount(perfectShot.mainMap, Killer.getUniqueId(), AccountType.PROFIL.getKeyPrefix());
+                    StatsAccount statsAccount = (StatsAccount) Main.getInstance().manipulation.getStatsAccount(Main.getInstance().localCacheManager, Killer.getUniqueId(), AccountType.statsKey(serverName));
+                    ProfilAccount profilAccount = (ProfilAccount) Main.getInstance().manipulation.getProfilAccount(Main.getInstance().localCacheManager, Killer.getUniqueId(), AccountType.PROFIL.getKeyPrefix());
                     profilAccount.setCoins(profilAccount.getCoins() + 5);
                     statsAccount.setKills(statsAccount.getKills() + 1);
                     statsAccount.setElos(statsAccount.getElos() + 1);
@@ -193,7 +147,7 @@ public class ParameterListeners implements Listener {
                     Killer.sendMessage("§b§l" + pftshotManager.getPrefix() + " §3> §r" + user2.getCachedData().getMetaData().getPrefix() + "§r " + Killer.getName() + " §7a\n térrassé §r" + user1.getCachedData().getMetaData().getPrefix() + "§r" + victim.getName());
 
                     Main.getInstance().gameMechanics.applyKillStreak(statsAccount, Killer, pftshotManager.getColor()+pftshotManager.getPrefix()); //Application du système de killstreak pour le killer
-                    StatsAccount statsAccount2 = (StatsAccount) Main.getInstance().manipulation.getStatsAccount(perfectShot.mainMap, victim.getUniqueId(), AccountType.statsKey(serverName));
+                    StatsAccount statsAccount2 = (StatsAccount) Main.getInstance().manipulation.getStatsAccount(Main.getInstance().localCacheManager, victim.getUniqueId(), AccountType.statsKey(serverName));
                     if (statsAccount2.getKillstreaks() > 1) { //Si la victime avait plus d'un kill, donc un killstreak
                         statsAccount2.setKillstreaks(0); //On lui réinitialise son killstreak car il est nul
                         victim.sendMessage("§c§lVous avez perdu vos KillStreaks!");
