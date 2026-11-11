@@ -2,7 +2,7 @@ package fr.pandamcbe.perfectshot.arenas;
 
 import fr.pandamcbe.mGConstructorAPI.arenas.Arena;
 import fr.pandamcbe.perfectshot.PerfectShot;
-import fr.pandamcbe.perfectshot.managers.PftshotManager;
+import fr.pandamcbe.perfectshot.managers.PftShotManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
@@ -19,7 +19,7 @@ public class CreateArenas {
 
     public CreateArenas() {
         arenas = new ArrayList<>(); //Au début de la méthode, quand elle est chargée au démarrage, elle est d'abord initialisée à une nouvelle liste, c'est un constructeur qui doit évidemment être appelé qu'une fois.
-        PftshotManager pftshotManager = PerfectShot.getInstance().getArenaManager();
+        PftShotManager pftshotManager = PerfectShot.getInstance().getArenaManager();
         PftShotArena arena1 = new PftShotArena(new Location(Bukkit.getWorld("world"), -20, 16, 50), "a#1", pftshotManager.getPrefix(), 5, 2, 16); //On définit le centre de l'arène en même temps que le monde et puis le nom de l'arène
         arena1.getSpawns().add(new Location(arena1.getMiddlespawn().getWorld(), -20, 3, 55, -180.0f, 1.0f));//On ajoute tous les spawnpoints en se basant sur le monde retourné par le getter de la location du centre de l'arène
         arena1.getSpawns().add(new Location(arena1.getMiddlespawn().getWorld(), -24, 3, 51, -90.0f, 1.0f));

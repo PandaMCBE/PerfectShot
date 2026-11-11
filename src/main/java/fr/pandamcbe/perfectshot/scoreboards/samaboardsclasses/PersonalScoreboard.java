@@ -41,7 +41,7 @@ public class PersonalScoreboard extends fr.pandamcbe.mgapi.serverutilapi.scorebo
                     this.objectiveSign.setLine(4, "§7RoundsWon : §f" + pftShotArena.getWonRounds().get(player.getUniqueId()) + "§8/§f" + pftShotArena.getRounds());
                     this.objectiveSign.setLine(5, "§7Coins : §f" + profilAccount.getCoins());
                     this.objectiveSign.setLine(6, "§7Points : §f" + pftShotArena.getPoints().get(player.getUniqueId()));
-                    this.objectiveSign.setLine(7, "§7Kills : §f" + (statsAccount.getKills() + (statsAccount.getKillstreaks() * 5)));
+                    this.objectiveSign.setLine(7, "§7Kills : §f" + (statsAccount.getKills()));
                     this.objectiveSign.setLine(8, "§7Arène : §f" + arena.getName());
                     this.objectiveSign.setLine(9, "§8§m------------");
                     this.objectiveSign.setLine(10, ip);

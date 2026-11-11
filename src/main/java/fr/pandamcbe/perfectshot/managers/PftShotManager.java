@@ -19,7 +19,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-public class PftshotManager extends ArenaManager {
+public class PftShotManager extends ArenaManager {
 
     public Set<UUID> invincible = new HashSet<>();
 

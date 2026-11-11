@@ -11,7 +11,7 @@ import fr.pandamcbe.mgapi.serverutilapi.enums_strings.AccountType;
 import fr.pandamcbe.mgapi.serverutilapi.enums_strings.AllNames;
 import fr.pandamcbe.perfectshot.PerfectShot;
 import fr.pandamcbe.perfectshot.arenas.PftShotArena;
-import fr.pandamcbe.perfectshot.managers.PftshotManager;
+import fr.pandamcbe.perfectshot.managers.PftShotManager;
 import net.luckperms.api.model.user.User;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -32,7 +32,7 @@ import org.bukkit.potion.PotionEffectType;
 
 public class ParameterListeners implements Listener {
 
-    final private PftshotManager arenaManager = PerfectShot.getInstance().getArenaManager();
+    final private PftShotManager arenaManager = PerfectShot.getInstance().getArenaManager();
     final private GameSessionManager gameSessionManager = MGConstructorAPI.getInstance().getGameManager();
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
@@ -109,7 +109,7 @@ public class ParameterListeners implements Listener {
         Player victim = e.getEntity();
         Player Killer = victim.getKiller();
         PerfectShot perfectShot = PerfectShot.getInstance();
-        PftshotManager pftshotManager = PerfectShot.getInstance().getArenaManager(); //Récupération de la classe ArenaManager qui ne craint rien si elle est appelée au démarrage, car elle contient que des méthodes et aucune variables
+        PftShotManager pftshotManager = PerfectShot.getInstance().getArenaManager(); //Récupération de la classe ArenaManager qui ne craint rien si elle est appelée au démarrage, car elle contient que des méthodes et aucune variables
         DirtyManager dirtyManager = new DirtyManager();
         victim.spigot().respawn();
 

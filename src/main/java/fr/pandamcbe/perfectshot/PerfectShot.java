@@ -5,7 +5,7 @@ import fr.pandamcbe.perfectshot.arenas.CreateArenas;
 import fr.pandamcbe.perfectshot.commands.Commands;
 import fr.pandamcbe.perfectshot.listeners.Game;
 import fr.pandamcbe.perfectshot.listeners.ParameterListeners;
-import fr.pandamcbe.perfectshot.managers.PftshotManager;
+import fr.pandamcbe.perfectshot.managers.PftShotManager;
 import fr.pandamcbe.perfectshot.rediscommunication.RedisSubCatch;
 import fr.pandamcbe.perfectshot.timers.PftShotRound;
 import net.luckperms.api.LuckPerms;
@@ -14,9 +14,6 @@ import org.bukkit.GameMode;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -24,7 +21,7 @@ public final class PerfectShot extends JavaPlugin {
 
     private static PerfectShot INSTANCE; //Instanciation de la classe Main en privé et accessible par tout le reste du projet
     public LuckPerms luckPerms;
-    public PftshotManager arenaManager;
+    public PftShotManager arenaManager;
     public CreateArenas createArenas;
     private ScheduledExecutorService executorMonoThread;
     private ScheduledExecutorService scheduledExecutorService;
@@ -32,7 +29,6 @@ public final class PerfectShot extends JavaPlugin {
     public ScheduledExecutorService getExecutorMonoThread() {
         return executorMonoThread;
     }
-    public Map<UUID, Map<String, Object>> mainMap;
     public PftShotRound pftShotRound;
 
     public ScheduledExecutorService getScheduledExecutorService() {
@@ -47,7 +43,7 @@ public final class PerfectShot extends JavaPlugin {
         getCommand("loadArenas").setExecutor(new Commands());
         new RedisSubCatch().subChannels();
 
-        arenaManager = new PftshotManager();
+        arenaManager = new PftShotManager();
         createArenas = new CreateArenas(); //Chargement des arènes pré-crées, au démarrage
         getServer().getPluginManager().registerEvents(new Game(this), this);
         getServer().getPluginManager().registerEvents(new ParameterListeners(), this);
@@ -64,9 +60,6 @@ public final class PerfectShot extends JavaPlugin {
         if (provider != null) {
             luckPerms = provider.getProvider();
         }
-
-        mainMap = new HashMap<>();
-
     }
 
     @Override
@@ -82,7 +75,7 @@ public final class PerfectShot extends JavaPlugin {
     return scoreboardManager;
 }
 
-    public PftshotManager getArenaManager() {
+    public PftShotManager getArenaManager() {
         return arenaManager;
     }
 

@@ -3,7 +3,7 @@ package fr.pandamcbe.perfectshot.timers;
 import fr.pandamcbe.mGConstructorAPI.managers.CountDownsManager;
 import fr.pandamcbe.perfectshot.PerfectShot;
 import fr.pandamcbe.perfectshot.arenas.PftShotArena;
-import fr.pandamcbe.perfectshot.managers.PftshotManager;
+import fr.pandamcbe.perfectshot.managers.PftShotManager;
 import fr.pandamcbe.perfectshot.scoreboards.samaboardsclasses.PersonalScoreboard;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
@@ -15,7 +15,7 @@ import java.util.UUID;
 public class PftShotStart extends BukkitRunnable {
     private final PftShotArena arena; //Variable Arena de type privée et constante
     private final PerfectShot perfectShot;
-    private final PftshotManager arenaManager = PerfectShot.getInstance().arenaManager;
+    private final PftShotManager arenaManager = PerfectShot.getInstance().arenaManager;
 
     public PftShotStart(PftShotArena arena, PerfectShot perfectShot) { //Constructeur de la classe, nécessitant l'entrée d'une arène
         this.arena = arena; //L'arène qui est rentrée en paramètre est égale à celle qui est écrite au-dessus

@@ -3,6 +3,7 @@ package fr.pandamcbe.perfectshot.arenas;
 import fr.pandamcbe.commons.ProfilAccount;
 import fr.pandamcbe.commons.StatsAccount;
 import fr.pandamcbe.mGConstructorAPI.MGConstructorAPI;
+import fr.pandamcbe.mGConstructorAPI.arenas.Arena;
 import fr.pandamcbe.mGConstructorAPI.arenas.MGArena;
 import fr.pandamcbe.mGConstructorAPI.managers.GameSessionManager;
 import fr.pandamcbe.mGConstructorAPI.managers.WaitingRoom;
@@ -11,7 +12,7 @@ import fr.pandamcbe.mgapi.core.localmemory.DirtyManager;
 import fr.pandamcbe.mgapi.serverutilapi.enums_strings.AccountType;
 import fr.pandamcbe.mgapi.serverutilapi.enums_strings.AllNames;
 import fr.pandamcbe.perfectshot.PerfectShot;
-import fr.pandamcbe.perfectshot.managers.PftshotManager;
+import fr.pandamcbe.perfectshot.managers.PftShotManager;
 import net.luckperms.api.model.user.User;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -59,18 +60,15 @@ public class PftShotArena extends MGArena {
 
     private final String serverName = AllNames.PFTSHOT.getName();
     private final PerfectShot perfectShot = PerfectShot.getInstance();
-    private final PftshotManager arenaManager = PerfectShot.getInstance().arenaManager;
+    private final PftShotManager arenaManager = PerfectShot.getInstance().arenaManager;
     private final GameSessionManager gameSessionManager = MGConstructorAPI.getInstance().getGameManager();
     private final DirtyManager dirtyManager = new DirtyManager();
 
-    public void OnChangingRound(PftShotArena arena, Player winner){
-        winner.sendMessage("§7§l+ §d§l1 elo !");
-        winner.sendMessage("§7§l+ §6§l10 coins !");
+    public void onSwitchingRound(Arena arena, Player winner){
         User user = PerfectShot.getInstance().luckPerms.getPlayerAdapter(Player.class).getUser(winner);
         for (UUID uuids : arena.getAlluuids()) {
             Player pls = Bukkit.getPlayer(uuids);
-            pls.sendMessage("§e§l" + arenaManager.getPrefix() + " > §l" + user.getCachedData().getMetaData().getPrefix() + " §l§r" + winner.getName() + " §3§lRemporte la manche !");
-            pls.sendTitle("§cNext Round!", "");
+            pls.sendMessage(arenaManager.getColor() +"§l"+ arenaManager.getPrefix() + " > §r" + user.getCachedData().getMetaData().getPrefix() + " " + winner.getName() + " §3Remporte la manche !");
         }
     }
 
@@ -81,8 +79,8 @@ public class PftShotArena extends MGArena {
         profilAccount.setCoins(profilAccount.getCoins() - 2);
         dirtyManager.markDirty(victim.getUniqueId(), AccountType.statsKey(serverName), statsAccount);
         dirtyManager.markDirty(victim.getUniqueId(), AccountType.PROFIL.getKeyPrefix(), profilAccount);
-        victim.sendMessage("§c§l- §6§l2 coins");
-        victim.sendMessage("§c§l- §d§l1 elo");
+        victim.sendMessage("§c- §62 coins");
+        victim.sendMessage("§c- §d1 elo");
         victim.sendMessage("§cVous êtes mort ! Bouh le nullos ! §eVous devez attendre le prochain round !");
         gameSessionManager.eliminate(victim, perfectShot.createArenas.getArenas());
     }
@@ -96,18 +94,12 @@ public class PftShotArena extends MGArena {
         dirtyManager.markDirty(winner.getUniqueId(), AccountType.statsKey(serverName), statsAccount);
         dirtyManager.markDirty(winner.getUniqueId(), AccountType.PROFIL.getKeyPrefix(), profilAccount);
         User user = PerfectShot.getInstance().luckPerms.getPlayerAdapter(Player.class).getUser(winner);
-        winner.sendMessage("§7§l+ §b§l1 win !");
-        winner.sendMessage("§7§l+ §6§l15 coins !");
+        winner.sendMessage("§7+ §b1 win !");
+        winner.sendMessage("§7+ §615 coins !");
         for(UUID uuid : arenaManager.getArenaByPlayer(winner.getUniqueId(), perfectShot.createArenas.getArenas()).getAlluuids()) {
-            Bukkit.getPlayer(uuid).sendMessage("§e§l" + arenaManager.getPrefix() + " > §r" + user.getCachedData().getMetaData().getPrefix() + " §r" + winner.getName() + " §b§lRemporte le oneshot ! §6§lGG");
+            Bukkit.getPlayer(uuid).sendMessage(arenaManager.getColor()+"§l"+arenaManager.getPrefix() + " > §r" + user.getCachedData().getMetaData().getPrefix() + " §r" + winner.getName() + " §b§lRemporte le oneshot ! §6§lGG");
         }
         gameSessionManager.checkWinCore(arenaManager, winner, perfectShot.createArenas.getArenas());
     }
 
-    @Override
-    public void nextRound(MGArena arena, Object o) {
-        Player player = (Player) o;
-        OnChangingRound((PftShotArena)arena, player);
-        gameSessionManager.nextRound(arenaManager, perfectShot.createArenas.getArenas(), player, Main.getInstance().localCacheManager, 10, 0);
-    }
 }

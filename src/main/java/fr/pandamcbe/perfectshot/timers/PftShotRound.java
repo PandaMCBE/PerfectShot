@@ -6,7 +6,7 @@ import fr.pandamcbe.mGConstructorAPI.managers.CountDownsManager;
 import fr.pandamcbe.mGConstructorAPI.managers.GameSessionManager;
 import fr.pandamcbe.perfectshot.PerfectShot;
 import fr.pandamcbe.perfectshot.arenas.PftShotArena;
-import fr.pandamcbe.perfectshot.managers.PftshotManager;
+import fr.pandamcbe.perfectshot.managers.PftShotManager;
 import fr.pandamcbe.perfectshot.utils.GiveKitsUtils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -22,7 +22,7 @@ public class PftShotRound extends BukkitRunnable {
     private final PftShotArena arena; //Instanciation de la classe Arena avec une variable de type privée et constante
     private int timer = 10; //Initialisation de la variable int timer à 10 de type privée et constante
     private final PerfectShot perfectShot;
-    private final PftshotManager arenaManager = PerfectShot.getInstance().getArenaManager(); //Initialisation de la variable arenamanager à l'instance de sa classe du même nom, de type privée et constante
+    private final PftShotManager arenaManager = PerfectShot.getInstance().getArenaManager(); //Initialisation de la variable arenamanager à l'instance de sa classe du même nom, de type privée et constante
     private final GameSessionManager gameSessionManager = MGConstructorAPI.getInstance().getGameManager();
     public PftShotRound(PftShotArena arena, PerfectShot perfectShot) {
         this.arena = arena; //Initialisation de la variable arena avec celle qui est donnée par le constructeur
@@ -32,6 +32,9 @@ public class PftShotRound extends BukkitRunnable {
     @Override
     public void run(){
         new CountDownsManager(arena, arenaManager).runNewRound(this, timer, Sound.CLICK, Sound.NOTE_PLING);
+        if(timer == 10) {
+            arena.setRounds(arena.getRounds() + 1);
+        }
         for (UUID uuid : arena.getAlluuids()) { //Pour chaque joueur de la liste d'ensemble de l'arène
             Player p = Bukkit.getPlayer(uuid);
             switch (timer) {
@@ -42,11 +45,11 @@ public class PftShotRound extends BukkitRunnable {
                     p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 999999, 1, true)); //Ajout d'un effet de vitesse de durée infini de niveau 2 sans voir les particules, à chaque joueur
                     p.setGameMode(GameMode.ADVENTURE);
                     p.sendTitle("§7§lLancement dans:", "§c§l10");
-                    p.sendMessage(perfectShot.arenaManager.getColor()+"§l" + perfectShot.arenaManager.getPrefix() + " §r§3> §b§lProfitez en pour vous disperser sur la map !");
+                    p.sendMessage(perfectShot.arenaManager.getColor()+"§l" + perfectShot.arenaManager.getPrefix() + " §r§3> §bProfitez en pour vous disperser sur la map !");
                     p.playSound(p.getLocation(), Sound.CLICK, 1.0f, 1.0f);
                     break;
                 case 5:
-                    p.sendMessage(perfectShot.arenaManager.getColor()+"§l" + perfectShot.arenaManager.getPrefix() + " §r§3> §4§l⚠ §b§lLe cooldown arrive à 0\nLes blocks se casseront sous vos pieds faites gaffe !");
+                    p.sendMessage(perfectShot.arenaManager.getColor()+"§l" + perfectShot.arenaManager.getPrefix() + " §r§3> §4⚠ §bLe cooldown arrive à 0\nLes blocks se casseront sous vos pieds faites gaffe !");
                     break;
                 case 0:
                     p.sendMessage("§a§l----------------------------\n§a§l----------------------------\n§a§l-----------------\n§b§lBut du jeu : §6Snipez tous vos adver\n§6saires avec votre arc du futur !\n§d§nSoyez le dernier en vie !\n§a§l-----------------\n§a§l----------------------------\n§a§l----------------------------");
@@ -75,7 +78,7 @@ public class PftShotRound extends BukkitRunnable {
                             if (arena.getBlocks().putIfAbsent(block.getLocation(), block.getType()) == null) {
                                 Bukkit.getScheduler().runTaskLater(perfectShot, () -> {
                                     block.setType(Material.AIR); //On remplace ce bloc par de l'air après un délai de 10 s pour le détruire sans que cela se casse directement sous les pieds du joueur.
-                                }, 10);
+                                }, 6);
                             }
                         }
                     }
